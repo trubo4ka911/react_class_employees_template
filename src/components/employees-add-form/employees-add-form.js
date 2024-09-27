@@ -17,7 +17,19 @@ class EmployeesAddForm extends Component {
   };
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.onAdd(this.state.name, this.state.salary);
+    const { name, salary } = this.state;
+    if (name === "" && salary === "") {
+      alert("Please add both name and salary.");
+      return;
+    } else if (salary === "") {
+      alert("Salary is required.");
+      return;
+    } else if (name === "") {
+      alert("Name is required.");
+      return;
+    }
+
+    this.props.onAdd(name, salary);
     this.setState({
       name: "",
       salary: "",
