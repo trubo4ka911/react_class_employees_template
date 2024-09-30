@@ -15,9 +15,32 @@ class EmployeesAddForm extends Component {
       [e.target.name]: e.target.value,
     });
   };
+
+  validateForm = () => {
+    const { name, salary } = this.state;
+    // Regular expression to allow only letters and spaces
+    const namePattern = /^[A-Za-z\s]+$/;
+
+    if (!name && !salary) return "Please add both name and salary.";
+    if (!name) return "Name is required.";
+    if (!salary) return "Salary is required.";
+    if (!namePattern.test(name))
+      return "Name can only include letters and spaces.";
+    if (name.length < 4) return "Full Name must be at least 4 characters long.";
+
+    return null;
+  };
+
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.onAdd(this.state.name, this.state.salary);
+    // Validate form
+    const errorMessage = this.validateForm();
+    if (errorMessage) {
+      alert(errorMessage);
+      return;
+    }
+    const { name, salary } = this.state;
+    this.props.onAdd(name, salary);
     this.setState({
       name: "",
       salary: "",
