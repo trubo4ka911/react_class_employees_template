@@ -42,19 +42,11 @@ class App extends Component {
           id: uuidv4(),
         },
       ],
+      term: "",
     };
   }
   deleteItem = (id) => {
     this.setState(({ data }) => {
-      //send updated Array
-      // const index = data.findIndex((elem) => elem.id == id);
-      // const before = data.slice(0, index);
-      // const after = data.slice(index + 1);
-      // const newArr = [...before, ...after];
-      // return {
-      //   data: newArr,
-      // };
-
       return {
         data: data.filter((item) => item.id !== id),
       };
@@ -72,42 +64,6 @@ class App extends Component {
       return { data: newArr };
     });
   };
-  // onToggleIncrease = (id) => {
-  //   //1st solution:
-  //   // this.setState(({ data }) => {
-  //   // const index = data.findIndex((e) => e.id === id);
-  //   // const old = data[index];
-  //   // const newItem = { ...old, increase: !old.increase };
-  //   // const newArray = [
-  //   //   ...data.slice(0, index),
-  //   //   newItem,
-  //   //   ...data.slice(index + 1),
-  //   // ];
-  //   // return {
-  //   //   data: newArray,
-  //   // };
-  //   // });
-
-  //   //2nd Faster Solution
-  //   this.setState(({ data }) => ({
-  //     data: data.map((item) => {
-  //       if (item.id === id) {
-  //         return { ...item, increase: !item.increase };
-  //       }
-  //       return item;
-  //     }),
-  //   }));
-  // };
-  // onToggleRise = (id) => {
-  //   this.setState(({ data }) => ({
-  //     data: data.map((item) => {
-  //       if (item.id === id) {
-  //         return { ...item, rise: !item.rise };
-  //       }
-  //       return item;
-  //     }),
-  //   }));
-  // };
 
   //Refactor the same function in onToggleIncrease and onToggleRise
   onToggleProp = (id, prop) => {
@@ -120,20 +76,36 @@ class App extends Component {
       }),
     }));
   };
+
+  searchEmp = (items, term) => {
+    if (term.trim().length === 0) {
+      return items;
+    }
+    const lowercasedTerm = term.trim().toLowerCase();
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(lowercasedTerm)
+    );
+  };
+
+  onUpdateSearch = (term) => {
+    this.setState({ term });
+  };
   render() {
+    const { data, term } = this.state;
     const employees = this.state.data.length;
     const increased = this.state.data.filter((item) => item.increase).length;
+    const visibleDate = this.searchEmp(data, term);
     return (
       <div className="app">
         <AppInfo employees={employees} increased={increased} />
 
         <div className="search-panel">
-          <SearchPanel />
+          <SearchPanel onUpdateSearch={this.onUpdateSearch} />
           <AppFilter />
         </div>
 
         <EmployeesList
-          data={this.state.data}
+          data={visibleDate}
           onDelete={this.deleteItem}
           onToggleProp={this.onToggleProp}
         />
